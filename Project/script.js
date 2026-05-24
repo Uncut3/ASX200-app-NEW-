@@ -2,7 +2,8 @@ let firstRun = localStorage.getItem("firstRun");
 let savedStock = localStorage.getItem("lastStock") || "ASX:AXJO";
 let chart = null;
 let activeTab = 0;
-const pill = document.getElementById("pill");
+
+let pill = null;
 
 function saveStock(symbol){
   savedStock = symbol;
@@ -83,6 +84,7 @@ async function loadNews(){
    NAV SYSTEM
 ========================= */
 function hoverTab(i){
+  if(!pill) return;
   pill.style.transform = `translateX(${i*100}%)`;
 }
 
@@ -93,12 +95,12 @@ function go(page){
 
   if(page==="stock"){
     activeTab=0;
-    pill.style.transform="translateX(0%)";
+   if(pill) pill.style.transform="translateX(0%)";
   }
 
   if(page==="news"){
     activeTab=2;
-    pill.style.transform="translateX(200%)";
+    if(pill) pill.style.transform="translateX(200%)";
     loadNews(); // Load AU news only when opened
   }
 }
@@ -109,7 +111,9 @@ function toggleSettings(){
   panel.classList.toggle("show");
 
   activeTab = panel.classList.contains("show") ? 1 : 0;
+  if(pill){
   pill.style.transform = `translateX(${activeTab*100}%)`;
+}
 }
 
 /* =========================
@@ -119,10 +123,9 @@ function toggleSettings(){
 /* Load saved theme */
 const savedTheme = localStorage.getItem("theme");
 
+
 if(savedTheme === "light"){
   document.body.classList.add("light");
-} else if(savedTheme === "black"){
-  document.body.classList.add("black");
 } else {
   document.body.classList.remove("light");
   document.body.classList.remove("black");
@@ -162,6 +165,8 @@ function light(){
    LOAD APP EVENT
 ========================= */
 window.addEventListener("load",()=>{
+  pill = document.getElementById("pill");
+
   updateIcons();
   initChart();
 
